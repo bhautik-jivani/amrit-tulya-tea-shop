@@ -1,0 +1,25 @@
+{% extends "tea_shop/base.html" %}
+
+{% block home %}
+active
+{% endblock %}
+{% block content %}
+{% load static %}
+
+
+<div class="ui horizontal segments">
+    <div class="ui segment">
+        <img class="ui large left floated image" src="{{product.prod_image.url}}" style="height: 300px;width: 220px;">
+        <h2>{{product.prod_name}}</h2>
+        <h3><i class="floated rupee sign icon"></i>{{product.prod_price}}</h3>
+        <p>{{product.prod_desc}}</p>
+    </div>
+</div>
+
+{% if msg %}
+<script>
+    alert("{{msg}}");
+    window.location = "{{url}}";
+</script>
+{% endif %}
+{% endblock %}
