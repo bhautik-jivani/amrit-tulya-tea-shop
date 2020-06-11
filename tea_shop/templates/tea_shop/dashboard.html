@@ -1,0 +1,55 @@
+{% extends "tea_shop/base.html" %}
+
+{% block home %}
+active
+{% endblock %}
+{% block content %}
+{% load static %}
+<h1>Welcome to Tea-Shop</h1>
+
+{% if not products %}
+<div class="text-center">
+    <h1>No Products available.</h1>
+</div>
+{% else %}
+    <div class="ui link cards">
+    {% for product in products %}
+    
+        <div class="card">
+            <div class="image" style="background: #fff;">
+                <a href="/product/{{product.id}}/view/"><img src="{{product.prod_image.url}}" class="ui centered medium rounded image" style="height: 260px;width: 190px;"></a>
+            </div>
+            <div class="content" >
+                <div class="header">
+                    <a href="/product/{{product.id}}/view/" style="color:#263238;">{{product.prod_name|truncatechars:29 }}</a>
+                </div>
+                <div class="description" style="color:#455A64;">
+                    {{product.prod_desc|truncatechars:79 }}
+                </div>
+            </div>
+            <div class="extra content">
+                <b style="color: #000;">
+                <i class="floated rupee sign icon"></i>
+                {{product.prod_price}}
+                </b>
+
+                <span class="right floated star">
+                    <a href="/product/{{product.id}}/remove/" style="color: #D32F2F;">
+                        <i class="floated trash icon"></i>
+                    </a>
+                </span>
+                
+            </div>
+        </div>
+        
+    {% endfor %}
+    </div>
+{% endif %}
+
+{% if msg %}
+<script>
+    alert("{{msg}}");
+    window.location = "{{url}}";
+</script>
+{% endif %}
+{% endblock %}

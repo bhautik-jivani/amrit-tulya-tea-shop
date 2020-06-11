@@ -1,0 +1,133 @@
+{% extends "tea_shop/base.html" %}
+
+{% block add-product %}
+active
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<h1>Add Product</h1>
+
+<form action="" method="POST" id="product-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="prod_name">Product Name:</label>
+        <input type="text" name="prod_name" id="prod_name" class="form-control" required placeholder="Enter Product Name">
+    </div>
+    <div class="form-group">
+        <label for="prod_description">Product Description:</label>
+        <textarea name="prod_description" id="prod_description" cols="30" rows="10" class="form-control" required placeholder="Enter Product Description"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="prod_price">Product Price:</label>
+        <input type="text" name="prod_price" id="prod_price" class="form-control" required placeholder="Enter Product Price">
+    </div>
+    <div class="form-group">
+        <label for="prod_img">Product Image:</label>
+        <br>
+        <img id="image_preview" class="rounded img-thumbnail" style="max-width: 400px;" src="{%static 'img/no_product_image.png' %}"> <br>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="prod_img" name="prod_img" onchange="imagePreview(this.files[0])" required accept="image/*" aria-describedby="inputGroupFileAddon01">
+            <label class="custom-file-label" for="prod_img">Choose file</label>
+        </div>
+        <!-- <input type="file" name="prod_img" id="prod_img" class="form-control " onchange="imagePreview(this.files[0])" required accept="image/*"> -->
+    </div>
+    <button type="submit" class="btn btn-outline-primary">Submit</button>
+    <button type="reset" class="btn btn-outline-danger">Reset</button>
+</form>
+<br>
+<br>
+
+{% if msg %}
+<script>
+    alert("{{msg}}");
+    window.location = "{{url}}";
+</script>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script>
+    function imagePreview(thisVal) {
+            console.log(thisVal);
+            var oFile = $('#prod_img')[0].files[0].size;
+            var extensionBannarImage = $('#prod_img').val().substring($('#prod_img').val().lastIndexOf('.') + 1)
+
+            console.log(oFile, extensionBannarImage)
+            if (oFile < 2097152) {// 2 mb for bytes.
+                if (extensionBannarImage == 'png' || extensionBannarImage == 'jpg' || extensionBannarImage == 'jpeg') {
+                    document.getElementById('image_preview').src = window.URL.createObjectURL(thisVal);
+                    // return true;
+                }
+                else {
+                    $('#prod_img').val('');
+                    alert('Select file which have JPG/PNG/JPEG extensions.')
+                    // return false;
+                }
+            } 
+            else {
+                // alert("File size must under 2mb!");
+                $('#prod_img').val('');
+                alert('File size must under 2 MB.');
+                // return false;
+            }
+        }
+    
+    $(function(){
+        var $productForm = $("#product-form");
+        $.validator.addMethod("noSpace", function(value, element){
+            return value == "" || value.trim().length != 0;
+        }, "Spaces are not allowed.");
+        ;
+        $.validator.addMethod("onlyDigit", function(value, element){
+            console.log(value);
+            if (value.match("^[0-9.]+$")){
+                return value;
+            }
+            else{
+                return false
+            }
+            // return value.match("/^[0-9]+$");
+            
+
+        },"Please enter only digits.");
+        if($productForm.length){
+            $productForm.validate({
+                rules:{
+                    prod_name:{
+                        required: true,
+                        noSpace: true,
+                    },
+                    prod_description:{
+                        required: true,
+                        noSpace: true,
+                    },
+                    prod_price:{
+                        required: true,
+                        noSpace: true,
+                        onlyDigit: true,
+                    },
+                    prod_img:{
+                        required: true
+                    }
+                },
+                messages:{
+                    prod_name:{
+                        required: "Please enter product name."
+                    },
+                    prod_description:{
+                        required: "Please enter product description."
+                    },
+                    prod_price:{
+                        required: "Please enter product price."
+                    },
+                    prod_img:{
+                        required: "Please upload product image."
+                    }
+                }
+            });
+        }
+    });
+    
+</script>
+{% endblock %}
